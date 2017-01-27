@@ -10,6 +10,7 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewTreeObserver;
+import android.widget.CheckBox;
 import android.widget.TextView;
 
 public class MainActivity extends AppCompatActivity implements IDrawable {
@@ -29,6 +30,9 @@ public class MainActivity extends AppCompatActivity implements IDrawable {
     private TextView mTextViewDegree;
     private TextView mTextViewSin;
     private TextView mTextViewCos;
+    private int mCenterX;
+    private int mCenterY;
+    private CheckBox mRoundCheckBox;
 
     public MainActivity(){
         mBackground = new Paint();
@@ -65,6 +69,7 @@ public class MainActivity extends AppCompatActivity implements IDrawable {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         mCanvasView = ((CanvasView) findViewById(R.id.simple_canvas));
+        mRoundCheckBox = (CheckBox) findViewById(R.id.round_checkBox);
 
         // set fragment size (mWrapperSize)
         final View wrapper = findViewById(R.id.canvas_fragment);
@@ -72,6 +77,8 @@ public class MainActivity extends AppCompatActivity implements IDrawable {
             @Override
             public void onGlobalLayout() {
                 mWrapperSize = new Point(wrapper.getWidth(), wrapper.getMeasuredHeightAndState());
+                mCenterX = mWrapperSize.x / 2;
+                mCenterY = mWrapperSize.y / 2;
 //                Log.i("my_log", mWrapperSize.x + " x " + mWrapperSize.y);
             }
         });
@@ -86,16 +93,17 @@ public class MainActivity extends AppCompatActivity implements IDrawable {
 
 
     public void drawCircle(View view) {
-        mTouchPosX = mWrapperSize.x / 2;
-        mTouchPosY = mWrapperSize.y / 2;
-        doDraw = true;
+        mTouchPosX = mCenterX;
+        mTouchPosY = mCenterY;
         mCanvasView.invalidate();
     }
 
     @Override
     public boolean touchEvent(MotionEvent event) {
+        doDraw = true;
         mTouchPosX = event.getX();
         mTouchPosY = event.getY();
+
         mTouchMotionState = event.getAction() & MotionEvent.ACTION_MASK;
         mCanvasView.invalidate();
         return true;
@@ -108,8 +116,8 @@ public class MainActivity extends AppCompatActivity implements IDrawable {
     @Override
     public void onDraw(Canvas canvas) {
         canvas.drawColor(mBackground.getColor());
-        final int cx = mWrapperSize.x / 2;
-        final int cy = mWrapperSize.y / 2;
+        final int cx = mCenterX;
+        final int cy = mCenterY;
         final int r = Math.min(cx, cy);
 
         // circle
@@ -133,6 +141,20 @@ public class MainActivity extends AppCompatActivity implements IDrawable {
         if (x < 0) u = Math.PI-u;
         else if (x >= 0 && y < 0) u = 2*Math.PI + u;
         double degree = u * 180 / Math.PI;
+
+        if (mRoundCheckBox.isChecked()){
+            // calc rounded degree
+            final double rd = 15.0;    // rounded value
+            degree = Math.round(degree / rd) * rd;
+            u = degree / (180 / Math.PI);
+            mTouchPosX = (float) (c * Math.cos(u));
+            mTouchPosY = (float) (c * Math.sin(u));
+
+            mTouchPosX = mTouchPosX + cx;
+            mTouchPosY = cy - mTouchPosY;
+            x = (double) mTouchPosX - cx;
+            y = (double) cy - mTouchPosY;
+        }
 
         float rx = r*(float)Math.cos(u);
         float ry = (float)Math.sqrt(r*r - rx*rx);

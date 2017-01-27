@@ -9,21 +9,30 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="com.kofon.geometry.MainActivity">
 
-    <Button
+    <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:onClick="drawCircle"
-        android:layout_centerHorizontal="true"
-        android:layout_gravity="center"
-        android:id="@+id/button1"
-        android:text="Draw circle" />
+        android:id="@+id/settings_linear_layout"
+        android:layout_centerHorizontal="true">
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="drawCircle"
+            android:text="@string/reset" />
+
+        <CheckBox
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/round"
+            android:id="@+id/round_checkBox" />
+    </LinearLayout>
 
     <fragment
         android:id="@+id/canvas_fragment"
         android:name="com.kofon.geometry.CanvasFragment"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/button1"
+        android:layout_below="@+id/settings_linear_layout"
         tools:layout="@layout/fragment_canvas" />
 
     <LinearLayout
