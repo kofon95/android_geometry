@@ -4,7 +4,11 @@
     android:layout_height="match_parent"
     tools:context="com.kofon.geometry.CanvasFragment">
 
-    <com.kofon.geometry.CanvasView
+    <com.kofon.geometry.drawable.circle.BackgroundDrawableView
+        android:id="@+id/background_canvas"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+    <com.kofon.geometry.drawable.circle.CurvesDrawableView
         android:id="@+id/simple_canvas"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
